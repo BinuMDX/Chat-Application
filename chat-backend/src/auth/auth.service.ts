@@ -27,7 +27,21 @@ export class AuthService {
     });
 
     const tokens = await this.getTokens(newUser.id, newUser.email);
+    await this.updateRtHash(newUser.id, tokens.refresh_token);
     return tokens;
+  }
+
+  
+  signin() {}
+  logout() {}
+  refreshTokens() {}
+
+  async updateRtHash(userId: number, rt: string) {
+    const hashRt = await this.hashData(rt);
+    await this.prismaService.user.update({
+      where: { id: userId },
+      data: { hashedRt: hashRt },
+    });
   }
 
   async getTokens(userId: number, email: string): Promise<Tokens> {
@@ -59,7 +73,5 @@ export class AuthService {
       refresh_token: rt,
     };
   }
-  signin() {}
-  logout() {}
-  refreshTokens() {}
+
 }

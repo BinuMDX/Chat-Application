@@ -6,6 +6,7 @@ CREATE TABLE "users" (
     "hashpassword" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "hashedRt" TEXT,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
