@@ -1,3 +1,5 @@
+"use client";
+
 import { api } from "@/lib/axios";
 import { SignupSchema, signupSchema } from "@/lib/validators/signupSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,9 +8,12 @@ import { useForm } from "react-hook-form";
 import { Card } from "../../../components/card";
 import { Input } from "../../../components/input";
 import { Button } from "../../../components/button";
+import { useSignup } from "@/features/auth/hooks";
 
 export function SignUpForm(){
     const router = useRouter();
+
+    const { signup, loading } = useSignup();
 
     const form = useForm<SignupSchema>({
         resolver: zodResolver(signupSchema),
@@ -32,7 +37,7 @@ export function SignUpForm(){
 
     return (
     <Card className="p-6 w-[380px]">
-      <h1 className="text-xl font-semibold mb-4">Register</h1>
+      <h1 className="text-xl font-semibold mb-4">Sign Up</h1>
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Input placeholder="Username" {...form.register("username")} />
@@ -43,13 +48,13 @@ export function SignUpForm(){
           {...form.register("password")}
         />
         <Input
-          type="confirmPassword"
+          type="password"
           placeholder="Confirm Password"
-          {...form.register("password")}
+          {...form.register("confirmPassword")}
         />
 
         <Button type="submit" className="w-full">
-          Register
+          Sign Up
         </Button>
       </form>
     </Card>

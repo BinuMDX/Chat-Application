@@ -1,7 +1,7 @@
 export default function UserList() {
   const dummyUsers = [
     { id: 1, name: "Binari" },
-    { id: 2, name: "Tharindu" },
+    { id: 2, name: "Ravindu" },
     { id: 3, name: "Kasun" },
   ];
 
