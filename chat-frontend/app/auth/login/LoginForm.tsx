@@ -5,9 +5,9 @@ import { loginSchema, LoginSchema } from "@/lib/validators/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/button";
+import { Card } from "@/components/card";
+import { Input } from "@/components/input";
 
 export function LoginForm() {
   const router = useRouter();

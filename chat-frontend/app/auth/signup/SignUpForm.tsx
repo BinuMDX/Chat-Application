@@ -3,9 +3,9 @@ import { SignupSchema, signupSchema } from "@/lib/validators/signupSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Card } from "../ui/card";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Card } from "../../../components/card";
+import { Input } from "../../../components/input";
+import { Button } from "../../../components/button";
 
 export function SignUpForm(){
     const router = useRouter();
