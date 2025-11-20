@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { AuthService } from './auth.service';
-import { AuthDto, SignInDto } from './dtos';
+import { AuthDto, LoginDto } from './dtos';
 import { Tokens } from './types';
 import { GetCurrentUserId, GetCurrentUser, Public } from './common/decorators';
 import { AtGuard, RtGuard } from './common/guards';
@@ -26,10 +26,10 @@ export class AuthController {
   }
 
   @Public()
-  @Post('/signin')
+  @Post('/login')
   @HttpCode(HttpStatus.OK)
-  signin(@Body() dto: SignInDto): Promise<Tokens> {
-    return this.authService.signin(dto);
+  signin(@Body() dto: LoginDto): Promise<Tokens> {
+    return this.authService.login(dto);
   }
 
 
