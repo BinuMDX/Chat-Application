@@ -19,7 +19,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: Socket) {
     try {
-      // Try to get token from auth object first, then from query params (for Postman testing)
       const token = client.handshake.auth.token || client.handshake.query.token;
 
       console.log('TOKEN RECEIVED:', token);
@@ -52,6 +51,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() { conversationId }: { conversationId: string },
   ) {
     client.join(conversationId);
+
+     console.log('joined room:', {
+      conversationId,
+      
+    });
   }
 
   // SEND message

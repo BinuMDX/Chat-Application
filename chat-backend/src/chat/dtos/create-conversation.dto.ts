@@ -1,7 +1,7 @@
-import { IsOptional, IsString } from "class-validator";
+import { IsArray, IsInt } from "class-validator";
 
 export class CreateConversationDto {
-  @IsOptional()
-  @IsString()
-  title?: string;
+  @IsArray()
+  @IsInt({ each: true })
+  participantIds: number[];
 }

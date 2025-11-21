@@ -2,6 +2,7 @@ import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { GetCurrentUserId } from '../auth/common';
 import { CreateMessageDto } from './dtos/create-message.dto';
+import { CreateConversationDto } from './dtos/create-conversation.dto';
 
 @Controller('chat')
 export class ChatController {
@@ -24,5 +25,10 @@ export class ChatController {
     @Body() dto: CreateMessageDto,
   ) {
     return this.chatService.saveMessage(conversationId, userId, dto.content);
+  }
+
+  @Post('/conversations')
+  createConversation(@Body() dto: CreateConversationDto) {
+    return this.chatService.createConversation(dto.participantIds);
   }
 }

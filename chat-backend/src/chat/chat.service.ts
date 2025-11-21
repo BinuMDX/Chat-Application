@@ -46,4 +46,23 @@ export class ChatService {
       orderBy: { createdAt: 'asc' },
     });
   }
+
+  async createConversation(participantIds: number[]) {
+    return this.prismaService.conversation.create({
+      data: {
+        participants: {
+          create: participantIds.map((userId) => ({
+            userId,
+          })),
+        },
+      },
+      include: {
+        participants: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+  }
 }
