@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -31,7 +32,6 @@ export class AuthController {
   signin(@Body() dto: LoginDto): Promise<Tokens> {
     return this.authService.login(dto);
   }
-
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
