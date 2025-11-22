@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthState>()(
       hasHydrated: false,
 
       setAuth: (user, accessToken, refreshToken) =>{
-        updateAxiosToken
+        updateAxiosToken(accessToken);
         set({
           user,
           accessToken,
@@ -55,23 +55,14 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
-      onRehydrateStorage: () => 
-        (state) => {
+      onRehydrateStorage: (state) => 
+        {
+          updateAxiosToken(state?.accessToken || null);
           state!.hasHydrated = true;
         },
     }
   )
 );
-
-// // Set hasHydrated immediately for fresh sessions (when there's nothing to rehydrate)
-// if (typeof window !== "undefined") {
-//   // Small delay to allow persist middleware to initialize
-//   setTimeout(() => {
-//     if (!useAuthStore.getState().hasHydrated) {
-//       useAuthStore.setState({ hasHydrated: true });
-//     }
-//   }, 0);
-// }
 
 if (typeof window !== "undefined") {
   useAuthStore.persist.rehydrate();

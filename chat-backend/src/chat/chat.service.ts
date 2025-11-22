@@ -47,6 +47,45 @@ export class ChatService {
     });
   }
 
+   async createOrGetConversation(userId: number, receiverId: number) {
+    // Does conversation already exist?
+    let conversation = await this.prismaService.conversation.findFirst({
+      where: {
+        participants: {
+          every: {
+            userId: { in: [userId, receiverId] },
+          },
+        },
+      },
+      include: {
+        participants: { include: { user: true } },
+        messages: {
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    });
+
+    if (conversation) return conversation;
+
+    // Create new conversation
+    conversation = await this.prismaService.conversation.create({
+      data: {
+        participants: {
+          create: [
+            { userId },
+            { userId: receiverId },
+          ],
+        },
+      },
+      include: {
+        participants: { include: { user: true } },
+        messages: true,
+      },
+    });
+
+    return conversation;
+  }
+
   async createConversation(participantIds: number[]) {
     return this.prismaService.conversation.create({
       data: {

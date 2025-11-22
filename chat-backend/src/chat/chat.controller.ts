@@ -27,8 +27,11 @@ export class ChatController {
     return this.chatService.saveMessage(conversationId, userId, dto.content);
   }
 
-  @Post('/conversations')
-  createConversation(@Body() dto: CreateConversationDto) {
-    return this.chatService.createConversation(dto.participantIds);
+  @Post('/conversation')
+  createConversation(
+    @Body() dto: CreateConversationDto,
+    @GetCurrentUserId() userId: number,
+  ) {
+    return this.chatService.createOrGetConversation(userId, dto.receiverId);
   }
 }

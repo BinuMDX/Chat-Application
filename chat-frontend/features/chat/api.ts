@@ -46,7 +46,7 @@ export async function getConversations(): Promise<Conversation[]> {
 
 // Get messages from a specific conversation
 export async function getMessages(conversationId: string): Promise<Message[]> {
-  const res = await api.get(`/chat/messages/${conversationId}`);
+  const res = await api.get(`/chat/conversation/${conversationId}`);
   return res.data;
 }
 
@@ -54,3 +54,11 @@ export async function getUsers(){
   const res = await api.get("/user");
   return res.data;
 }
+
+ export async function createOrGetConversation(receiverId: number) {
+   const res = await api.post("/chat/conversations", {
+      participantIds: [receiverId],
+    });
+    return res.data;
+  
+ } 

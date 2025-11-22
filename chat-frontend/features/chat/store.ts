@@ -8,70 +8,80 @@ interface Message {
   createdAt: string;
 }
 
+interface Participant {
+  userId: number;
+  isSelf: boolean;
+  user: {
+    id: number;
+    username: string;
+  };
+}
+
 interface Conversation {
   id: string;
-  participants: {
-    userId: number;
-    isSelf: boolean;
-    user: {
-      id: number;
-      username: string;
-    };
-  }[];
+  participants: Participant[];
   lastMessage?: Message;
-  messages?: Message[];
+  messages: Message[];
 }
 
 interface ChatState {
-  messages: Message[];
   chats: Conversation[];
-  activeChat: string | null;
+  activeChat: Conversation | null;
   isLoading: boolean;
 
-  setMessages: (conversationId: string, messages: Message[]) => void;
-  addMessage: (conversationId: string, msg: Message) => void;
   setChats: (chats: Conversation[]) => void;
-  setActiveChat: (id: string | null) => void;
+  setActiveChat: (conversation: Conversation | null) => void;
+  setMessages: (conversationId: string, messages: Message[]) => void;
+  addMessage: (msg: Message) => void;
   setIsLoading: (isLoading: boolean) => void;
   clearChatState: () => void;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
-  messages: [],
   chats: [],
   activeChat: null,
   isLoading: false,
 
-  setMessages: (conversationId, messages) =>
-    set((s) => {
-      const updatedChats = s.chats.map((chat) =>
-        chat.id === conversationId ? { ...chat, messages } : chat
-      );
-      return { chats: updatedChats, messages };
-    }),
-
-  addMessage: (conversationId, msg) =>
-    set((s) => ({
-      chats: s.chats.map((chat) =>
-        chat.id === conversationId
-          ? {
-              ...chat,
-              messages: [...(chat.messages ?? []), msg],
-              lastMessage: msg,
-            }
-          : chat
-      ),
-    })),
-
   setChats: (chats) => set({ chats }),
 
-  setActiveChat: (id) => set({ activeChat: id }),
+  setActiveChat: (conversation) => set({ activeChat: conversation }),
+
+  setMessages: (conversationId, messages) =>
+    set((s) => ({
+      chats: s.chats.map((c) =>
+        c.id === conversationId ? { ...c, messages } : c
+      ),
+      activeChat:
+        s.activeChat?.id === conversationId
+          ? { ...s.activeChat, messages }
+          : s.activeChat,
+    })),
+
+  addMessage: (msg) =>
+    set((s) => ({
+      chats: s.chats.map((c) =>
+        c.id === msg.conversationId
+          ? {
+              ...c,
+              messages: [...c.messages, msg],
+              lastMessage: msg,
+            }
+          : c
+      ),
+      activeChat:
+        s.activeChat?.id === msg.conversationId
+          ? {
+              ...s.activeChat,
+              messages: [...s.activeChat.messages, msg],
+              lastMessage: msg,
+            }
+          : s.activeChat,
+    })),
 
   setIsLoading: (isLoading) => set({ isLoading }),
 
   clearChatState: () =>
     set({
-      messages: [],
       chats: [],
       activeChat: null,
       isLoading: false,
