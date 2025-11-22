@@ -10,7 +10,11 @@ import { Card } from "@/components/card";
 import { Input } from "@/components/input";
 import { useAuthStore } from "@/features/auth/store";
 
-export function LoginForm() {
+interface LoginFormProps {
+  standalone?: boolean;
+}
+
+export function LoginForm({ standalone = true }: LoginFormProps) {
   const router = useRouter();
 
   const form = useForm<LoginSchema>({
@@ -27,10 +31,10 @@ export function LoginForm() {
     try {
       const res = await api.post("/auth/login", values);
       setAuth(res.data.user, res.data.access_token, res.data.refresh_token);
-      
+
       // Small delay to ensure Zustand persist completes
       await new Promise(resolve => setTimeout(resolve, 100));
-      
+
       router.push("/chat");
     } catch (error) {
       console.error(error);
@@ -38,25 +42,35 @@ export function LoginForm() {
     }
   };
 
-  return (
-    <Card className="p-6 w-[380px]">
-      <h1 className="text-xl font-semibold mb-4">Login</h1>
+  const formContent = (
+    <>
+      {standalone && <h1 className="text-xl font-semibold mb-4">Login</h1>}
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <Input
-          type="email"
-          className=""
-          placeholder="Email"
-          {...form.register("email")}
-        />
-        <Input
-          type="password"
-          className=""
-          autoComplete="current-password"
-          placeholder="Password"
-          {...form.register("password")}
-        />
+        <div>
+          <Input
+            type="email"
+            className=""
+            placeholder="Email"
+            {...form.register("email")}
+          />
+          {form.formState.errors.email && (
+            <p className="text-red-500 text-sm">{form.formState.errors.email.message}</p>
+          )}
+        </div>
 
+        <div>
+          <Input
+            type="password"
+            className=""
+            autoComplete="current-password"
+            placeholder="Password"
+            {...form.register("password")}
+          />
+          {form.formState.errors.password && (
+            <p className="text-red-500 text-sm">{form.formState.errors.password.message}</p>
+          )}
+        </div>
         <Button
           type="submit"
           variant="default"
@@ -66,6 +80,12 @@ export function LoginForm() {
           Login
         </Button>
       </form>
-    </Card>
+    </>
   );
+
+  if (standalone) {
+    return <Card className="p-6 w-[380px]">{formContent}</Card>;
+  }
+
+  return formContent;
 }

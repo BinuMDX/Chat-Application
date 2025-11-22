@@ -28,42 +28,42 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       hasHydrated: false,
 
-      setAuth: (user, accessToken, refreshToken) =>{
+      setAuth: (user, accessToken, refreshToken) => {
         updateAxiosToken(accessToken);
         set({
           user,
           accessToken,
           refreshToken,
           isAuthenticated: true,
-        })},
+        })
+      },
 
-      clearAuth: () =>{
+      clearAuth: () => {
         updateAxiosToken(null);
         set({
           user: null,
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
-        })},
+        })
+      },
 
-      updateTokens: (accessToken, refreshToken) =>{
+      updateTokens: (accessToken, refreshToken) => {
         updateAxiosToken(accessToken);
         set({
           accessToken,
           refreshToken,
-        })},
+        })
+      },
     }),
     {
       name: "auth-storage",
-      onRehydrateStorage: (state) => 
-        {
-          updateAxiosToken(state?.accessToken || null);
-          state!.hasHydrated = true;
-        },
+      onRehydrateStorage: () => (state) => {
+        updateAxiosToken(state?.accessToken || null);
+        if (state) {
+          state.hasHydrated = true;
+        }
+      },
     }
   )
 );
-
-if (typeof window !== "undefined") {
-  useAuthStore.persist.rehydrate();
-}

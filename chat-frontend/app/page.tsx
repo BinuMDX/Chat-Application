@@ -1,9 +1,5 @@
-import { LoginForm } from "@/app/auth/login/LoginForm";
+import { LandingPage } from "@/components/LandingPage";
 
-export default function LoginPage() {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <LoginForm />
-    </div>
-  );
+export default function HomePage() {
+  return <LandingPage />;
 }

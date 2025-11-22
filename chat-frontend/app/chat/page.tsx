@@ -9,28 +9,13 @@ export default function ChatPage() {
   const { chats } = useChatStore();
 
   return (
-    <div className="flex w-full h-screen">
+    <div className="flex w-full h-screen overflow-hidden">
       <Sidebar />
 
       <div className="flex flex-col flex-1 bg-gray-100">
-        {/* Default conversation room - shown when no conversation is selected */}
         <div className="flex flex-1 items-center justify-center">
           <div className="text-center p-8">
-            <div className="mb-4">
-              <svg
-                className="w-24 h-24 mx-auto text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                />
-              </svg>
-            </div>
+         
             <h2 className="text-2xl font-semibold text-gray-700 mb-2">
               Welcome, {user?.username || "User"}!
             </h2>
