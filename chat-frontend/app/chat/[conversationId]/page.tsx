@@ -103,13 +103,17 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full w-full overflow-hidden">
       <Sidebar />
 
       <div className="flex flex-col flex-1">
         <ChatHeader chat={activeChat} />
 
-        <MessageList messages={activeChat.messages || []} isConnected={isConnected} />
+        <MessageList
+          messages={activeChat.messages || []}
+          isConnected={isConnected}
+          currentUserId={user?.id}
+        />
 
         <MessageInput onSend={handleSend} />
       </div>
