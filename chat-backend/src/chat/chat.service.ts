@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ChatService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) { }
 
   createMessage(senderId: number, conversationId: string, text: string) {
     return this.prismaService.message.create({
@@ -26,7 +26,7 @@ export class ChatService {
   }
 
   async getConversations(userId: number) {
-    return this.prismaService.conversation.findMany({
+    const conversations = await this.prismaService.conversation.findMany({
       where: {
         participants: {
           some: { userId },
@@ -37,14 +37,46 @@ export class ChatService {
         messages: { take: 1, orderBy: { createdAt: 'desc' } },
       },
     });
+
+    // Transform conversations to match frontend expectations
+    return conversations.map((conv) => ({
+      id: conv.id,
+      participants: conv.participants.map((p) => ({
+        userId: p.userId,
+        isSelf: p.userId === userId,
+        user: {
+          id: p.user.id,
+          username: p.user.username,
+        },
+      })),
+      messages: [],
+      lastMessage: conv.messages[0]
+        ? {
+          id: conv.messages[0].id,
+          text: conv.messages[0].text,
+          senderId: conv.messages[0].senderId,
+          conversationId: conv.messages[0].conversationId,
+          createdAt: conv.messages[0].createdAt.toISOString(),
+        }
+        : undefined,
+    }));
   }
 
   async getMessages(conversationId: string) {
-    return this.prismaService.message.findMany({
+    const messages = await this.prismaService.message.findMany({
       where: { conversationId },
       include: { sender: true },
       orderBy: { createdAt: 'asc' },
     });
+
+    // Transform messages to match frontend expectations
+    return messages.map((msg) => ({
+      id: msg.id,
+      text: msg.text,
+      senderId: msg.senderId,
+      conversationId: msg.conversationId,
+      createdAt: msg.createdAt.toISOString(),
+    }));
   }
 
   async createOrGetConversation(userId: number, receiverId: number) {

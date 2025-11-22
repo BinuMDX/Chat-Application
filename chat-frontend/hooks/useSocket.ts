@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 interface UseSocketOptions {
@@ -18,10 +18,27 @@ export const useSocket = (options: UseSocketOptions) => {
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
 
+  // Store callbacks in refs to prevent re-creating socket on every render
+  const onMessageRef = useRef(onMessage);
+  const onConnectRef = useRef(onConnect);
+  const onDisconnectRef = useRef(onDisconnect);
+  const onErrorRef = useRef(onError);
+
+  // Update refs when callbacks change
+  useEffect(() => {
+    onMessageRef.current = onMessage;
+    onConnectRef.current = onConnect;
+    onDisconnectRef.current = onDisconnect;
+    onErrorRef.current = onError;
+  }, [onMessage, onConnect, onDisconnect, onError]);
+
   useEffect(() => {
     if (!token) {
+      console.log('No token available, skipping socket connection');
       return;
     }
+
+    console.log('Initializing socket connection...');
 
     // Create socket connection with token
     const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3033', {
@@ -44,26 +61,26 @@ export const useSocket = (options: UseSocketOptions) => {
       console.log('Socket connected:', socket.id);
       setIsConnected(true);
       setConnectionError(null);
-      onConnect?.();
+      onConnectRef.current?.();
     });
 
     socket.on('disconnect', (reason) => {
       console.log('Socket disconnected:', reason);
       setIsConnected(false);
-      onDisconnect?.();
+      onDisconnectRef.current?.();
     });
 
     socket.on('connect_error', (error) => {
       console.error('Socket connection error:', error.message);
       setConnectionError(error.message);
       setIsConnected(false);
-      onError?.(error);
+      onErrorRef.current?.(error);
     });
 
     // Message handler
     socket.on('message', (message) => {
       console.log('Received message:', message);
-      onMessage?.(message);
+      onMessageRef.current?.(message);
     });
 
     // Cleanup on unmount
@@ -76,7 +93,7 @@ export const useSocket = (options: UseSocketOptions) => {
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [token, onMessage, onConnect, onDisconnect, onError]);
+  }, [token]); // Only depend on token
 
   // Join a conversation room
   const joinRoom = (conversationId: string) => {

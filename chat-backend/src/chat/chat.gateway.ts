@@ -15,7 +15,7 @@ import * as jwt from 'jsonwebtoken';
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService) { }
 
   async handleConnection(client: Socket) {
     try {
@@ -52,9 +52,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     client.join(conversationId);
 
-     console.log('joined room:', {
+    console.log('joined room:', {
       conversationId,
-      
+
     });
   }
 
@@ -80,8 +80,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       data.text,
     );
 
+    // Transform the message to match frontend expectations
+    const messagePayload = {
+      id: msg.id,
+      text: msg.text,
+      senderId: msg.senderId,
+      conversationId: msg.conversationId,
+      createdAt: msg.createdAt.toISOString(),
+    };
+
+    console.log('Broadcasting message:', messagePayload);
+
     // Broadcast to room
-    this.server.to(data.conversationId).emit('message', msg);
+    this.server.to(data.conversationId).emit('message', messagePayload);
   }
 
   @SubscribeMessage('typing')

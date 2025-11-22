@@ -10,7 +10,7 @@ import { useAuthStore } from "@/features/auth/store";
 import { useChatStore } from "@/features/chat/store";
 
 import api from "@/lib/axios";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 
 export default function ChatPage() {
@@ -22,11 +22,15 @@ export default function ChatPage() {
 
   const { activeChat, setActiveChat, setMessages, addMessage } = useChatStore();
 
+  // Wrap onMessage in useCallback to prevent recreating on every render
+  const handleMessage = useCallback((msg: any) => {
+    console.log('Message received from socket:', msg);
+    addMessage(msg);
+  }, [addMessage]);
+
   const { isConnected, joinRoom, sendMessage } = useSocket({
     token,
-    onMessage: (msg) => {
-      addMessage(msg);
-    },
+    onMessage: handleMessage,
   });
 
   // Load conversation + messages

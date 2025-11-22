@@ -63,7 +63,7 @@ export const useChatStore = create<ChatState>((set) => ({
         c.id === msg.conversationId
           ? {
             ...c,
-            messages: [...c.messages, msg],
+            messages: [...(c.messages || []), msg],
             lastMessage: msg,
           }
           : c
@@ -72,7 +72,7 @@ export const useChatStore = create<ChatState>((set) => ({
         s.activeChat?.id === msg.conversationId
           ? {
             ...s.activeChat,
-            messages: [...s.activeChat.messages, msg],
+            messages: [...(s.activeChat.messages || []), msg],
             lastMessage: msg,
           }
           : s.activeChat,
