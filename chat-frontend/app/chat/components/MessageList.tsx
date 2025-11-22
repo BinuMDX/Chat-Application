@@ -1,21 +1,25 @@
-export default function MessageList() {
-  const messages = [
-    { id: 1, text: "Hi, how are you?", sender: "me" },
-    { id: 2, text: "I'm fine! Working on the chat app.", sender: "them" },
-  ];
+'use client';
 
+export default function MessageList({ messages, isConnected }: any) {
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-3">
-      {messages.map((msg) => (
-        <div
-          key={msg.id}
-          className={`p-3 rounded-lg max-w-[60%] ${
-            msg.sender === "me"
-              ? "bg-blue-500 text-white ml-auto"
-              : "bg-gray-200 text-black"
-          }`}
-        >
-          {msg.text}
+    <div className="flex-1 overflow-y-auto p-4">
+      {!isConnected && (
+        <div className="text-center text-gray-500 mb-4">
+          Connecting to chat...
+        </div>
+      )}
+
+      {messages.length === 0 && isConnected && (
+        <div className="text-center text-gray-400 mt-8">
+          No messages yet. Start the conversation!
+        </div>
+      )}
+
+      {messages.map((m: any, idx: number) => (
+        <div key={idx} className="mb-3">
+          <div className="p-2 bg-white rounded shadow-sm inline-block">
+            {m.text}
+          </div>
         </div>
       ))}
     </div>

@@ -1,5 +1,6 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { updateAxiosToken } from "@/lib/axios";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface User {
   id: number;
@@ -27,46 +28,42 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       hasHydrated: false,
 
-      setAuth: (user, accessToken, refreshToken) =>
+      setAuth: (user, accessToken, refreshToken) =>{
+        updateAxiosToken(accessToken);
         set({
           user,
           accessToken,
           refreshToken,
           isAuthenticated: true,
-        }),
+        })},
 
-      clearAuth: () =>
+      clearAuth: () =>{
+        updateAxiosToken(null);
         set({
           user: null,
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
-        }),
+        })},
 
-      updateTokens: (accessToken, refreshToken) =>
+      updateTokens: (accessToken, refreshToken) =>{
+        updateAxiosToken(accessToken);
         set({
           accessToken,
           refreshToken,
-        }),
+        })},
     }),
     {
-      name: 'auth-storage',
-      onRehydrateStorage: () => {
-        return () => {
-          // This runs after rehydration is complete
-          useAuthStore.setState({ hasHydrated: true });
-        };
-      },
+      name: "auth-storage",
+      onRehydrateStorage: (state) => 
+        {
+          updateAxiosToken(state?.accessToken || null);
+          state!.hasHydrated = true;
+        },
     }
   )
 );
 
-// Set hasHydrated immediately for fresh sessions (when there's nothing to rehydrate)
-if (typeof window !== 'undefined') {
-  // Small delay to allow persist middleware to initialize
-  setTimeout(() => {
-    if (!useAuthStore.getState().hasHydrated) {
-      useAuthStore.setState({ hasHydrated: true });
-    }
-  }, 0);
+if (typeof window !== "undefined") {
+  useAuthStore.persist.rehydrate();
 }

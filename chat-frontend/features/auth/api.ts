@@ -11,3 +11,4 @@ export async function signupUser(data: SignupSchema) {
   const res = await api.post("/auth/signup", data);
   return res.data;
 }
+

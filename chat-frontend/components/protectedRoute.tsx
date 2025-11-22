@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuthStore } from "@/store";
+import { useAuthStore } from "@/features/auth/store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -21,7 +21,7 @@ export default function ProtectedRoute({
   }, [token, hasHydrated, router]);
 
   // Show loading/nothing until hydrated
-  if (!hasHydrated) return null;
+  if (!hasHydrated) return <div>Loading…</div>;
   
   // Show nothing if no token after hydration
   if (!token) return null;

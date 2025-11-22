@@ -6,15 +6,15 @@ import { CreateConversationDto } from './dtos/create-conversation.dto';
 
 @Controller('chat')
 export class ChatController {
-   constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService) { }
 
-   @Get('/conversations')
-   getConversations(@GetCurrentUserId() userId: number) {
-      return this.chatService.getConversations(userId);
-   }
+  @Get('/conversations')
+  getConversations(@GetCurrentUserId() userId: number) {
+    return this.chatService.getConversations(userId);
+  }
 
-   @Get('/messages/:conversationId')
-  getMessages(@Param("conversationId") id: string) {
+  @Get('/messages/:conversationId')
+  getMessages(@Param('conversationId') id: string) {
     return this.chatService.getMessages(id);
   }
 
@@ -27,8 +27,11 @@ export class ChatController {
     return this.chatService.saveMessage(conversationId, userId, dto.content);
   }
 
-  @Post('/conversations')
-  createConversation(@Body() dto: CreateConversationDto) {
-    return this.chatService.createConversation(dto.participantIds);
+  @Post('conversation')
+  async createConversation(
+    @GetCurrentUserId() userId: number,
+    @Body() dto: CreateConversationDto,
+  ) {
+    return this.chatService.createOrGetConversation(userId, dto.receiverId);
   }
 }

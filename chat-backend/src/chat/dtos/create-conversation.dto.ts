@@ -1,7 +1,6 @@
-import { IsArray, IsInt } from "class-validator";
+import { IsInt } from "class-validator";
 
 export class CreateConversationDto {
-  @IsArray()
-  @IsInt({ each: true })
-  participantIds: number[];
+  @IsInt()
+  receiverId: number;
 }
