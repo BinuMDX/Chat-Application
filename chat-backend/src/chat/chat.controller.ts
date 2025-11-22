@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Req } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { GetCurrentUserId } from '../auth/common';
 import { CreateMessageDto } from './dtos/create-message.dto';
@@ -6,7 +6,7 @@ import { CreateConversationDto } from './dtos/create-conversation.dto';
 
 @Controller('chat')
 export class ChatController {
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService) { }
 
   @Get('/conversations')
   getConversations(@GetCurrentUserId() userId: number) {
@@ -28,8 +28,10 @@ export class ChatController {
   }
 
   @Post('conversation')
-  async createConversation(@Req() req, @Body() dto: CreateConversationDto) {
-    const userId = req.user.id;
+  async createConversation(
+    @GetCurrentUserId() userId: number,
+    @Body() dto: CreateConversationDto,
+  ) {
     return this.chatService.createOrGetConversation(userId, dto.receiverId);
   }
 }

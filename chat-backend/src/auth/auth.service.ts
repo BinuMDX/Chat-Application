@@ -10,7 +10,7 @@ export class AuthService {
   constructor(
     private prismaService: PrismaService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   hashData(data: string) {
     return bcrypt.hash(data, 10);
@@ -48,12 +48,12 @@ export class AuthService {
       },
     });
 
-    const tokens = await this.getTokens(newUser.id, newUser.email);
+    const tokens = await this.getTokens(newUser.id, newUser.email, newUser.username);
     await this.updateRtHash(newUser.id, tokens.refresh_token);
     return tokens;
   }
 
-  
+
   async login(dto: LoginDto): Promise<Tokens> {
     const user = await this.prismaService.user.findUnique({
       where: {
@@ -74,25 +74,25 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
 
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.username);
     await this.updateRtHash(user.id, tokens.refresh_token);
     return tokens;
   }
 
-  async logout(userId:number) {
+  async logout(userId: number) {
     await this.prismaService.user.updateMany({
       where: {
-        id: userId, 
-        hashedRt:{
+        id: userId,
+        hashedRt: {
           not: null,
         },
       },
-      data:{
+      data: {
         hashedRt: null,
       },
-      });
+    });
 
-      return true;
+    return true;
   }
 
   async refreshTokens(userId: number, rt: string): Promise<Tokens> {
@@ -112,7 +112,7 @@ export class AuthService {
       throw new ForbiddenException('Access Denied');
     }
 
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.username);
     await this.updateRtHash(user.id, tokens.refresh_token);
     return tokens;
   }
@@ -125,7 +125,7 @@ export class AuthService {
     });
   }
 
-  async getTokens(userId: number, email: string): Promise<Tokens> {
+  async getTokens(userId: number, email: string, username: string): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
@@ -152,6 +152,11 @@ export class AuthService {
     return {
       access_token: at,
       refresh_token: rt,
+      user: {
+        id: userId,
+        email,
+        username,
+      },
     };
   }
 

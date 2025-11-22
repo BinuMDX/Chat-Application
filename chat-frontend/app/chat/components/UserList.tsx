@@ -4,15 +4,23 @@ import { useEffect, useState } from "react";
 import api from "@/lib/axios";
 import { useChatStore } from "@/features/chat/store";
 import { useAuthStore } from "@/features/auth/store";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 export default function UserList() {
   const router = useRouter();
+  const params = useParams();
   const { user } = useAuthStore();
-  const { activeChat, setActiveChat } = useChatStore();
+  const { setActiveChat } = useChatStore();
 
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+
+  // Track current conversation from URL
+  useEffect(() => {
+    const convId = params.conversationId as string;
+    setCurrentConversationId(convId || null);
+  }, [params.conversationId]);
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -29,33 +37,40 @@ export default function UserList() {
     loadUsers();
   }, []);
 
-  const openChat = async (otherUserId: number) => {
-    const res = await api.post("/chat/create-or-get", {
-      userId: otherUserId,
-    });
+  const openChat = async (otherUser: any) => {
+    try {
+      setActiveChat(otherUser);
 
-    const conversationId = res.data.id;
+      const res = await api.post("/chat/conversation", {
+        receiverId: otherUser.id,
+      });
 
-    router.push(`/chat/${conversationId}`);
+      const conversationId = res.data.id;
+      setCurrentConversationId(conversationId);
+
+      router.push(`/chat/${conversationId}`);
+    } catch (err) {
+      console.error("Failed to open chat:", err);
+    }
   };
 
   if (loading) return <div className="p-4">Loading users…</div>;
 
   return (
-    <div className="w-64 bg-white border-r p-4">
-
+    <div className="p-4">
       <ul className="space-y-2">
         {users
           .filter((u) => u.id !== user?.id) // hide yourself
           .map((u) => (
             <li
               key={u.id}
-              onClick={() => {setActiveChat(u); openChat(u.id);}}
-              className={`p-3 cursor-pointer rounded-lg 
-                ${activeChat?.id === u.id ? "bg-blue-500 text-white" : "bg-gray-100"}
+              onClick={() => openChat(u)}
+              className={`p-3 cursor-pointer rounded-lg transition-colors
+                ${currentConversationId ? "bg-gray-100 hover:bg-gray-200" : "bg-gray-100 hover:bg-blue-50"}
               `}
             >
-              {u.username}
+              <div className="font-medium">{u.username}</div>
+              {u.email && <div className="text-sm text-gray-500">{u.email}</div>}
             </li>
           ))}
       </ul>

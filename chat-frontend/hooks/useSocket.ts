@@ -13,7 +13,7 @@ interface UseSocketOptions {
 
 export const useSocket = (options: UseSocketOptions) => {
   const { token, onMessage, onConnect, onDisconnect, onError } = options;
-  
+
   const socketRef = useRef<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
@@ -101,7 +101,7 @@ export const useSocket = (options: UseSocketOptions) => {
     if (socketRef.current?.connected) {
       socketRef.current.emit('message', {
         conversationId,
-        content,
+        text: content,
       });
       console.log('Sent message:', { conversationId, content });
     } else {

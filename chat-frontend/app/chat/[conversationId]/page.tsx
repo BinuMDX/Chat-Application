@@ -32,21 +32,28 @@ export default function ChatPage() {
   useEffect(() => {
     if (!conversationId) return;
 
+    // Fetch messages for this conversation
     api
-      .get(`/chat/conversation/${conversationId}`)
+      .get(`/chat/messages/${conversationId}`)
       .then((res) => {
-        setActiveChat(res.data.conversation);
-        setMessages(conversationId, res.data.messages);
+        setMessages(conversationId, res.data);
       })
       .catch(console.error);
-  }, [conversationId]);
+  }, [conversationId, setMessages]);
 
-  // Join socket room
+  // Join socket room and handle room switching
   useEffect(() => {
     if (isConnected && conversationId) {
+      console.log('Joining room:', conversationId);
       joinRoom(conversationId);
+
+      // Cleanup: leave room when conversation changes or component unmounts
+      return () => {
+        console.log('Leaving room:', conversationId);
+        // Note: leaveRoom is handled by socket cleanup
+      };
     }
-  }, [isConnected, conversationId]);
+  }, [isConnected, conversationId, joinRoom]);
 
   const handleSend = (text: string) => {
     sendMessage(conversationId, text);
