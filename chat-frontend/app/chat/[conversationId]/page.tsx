@@ -17,6 +17,7 @@ export default function ChatPage() {
   const params = useParams();
   const conversationId = params.conversationId as string;
 
+  const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.accessToken);
 
   const { activeChat, setActiveChat, setMessages, addMessage } = useChatStore();
@@ -24,13 +25,26 @@ export default function ChatPage() {
   const { isConnected, joinRoom, sendMessage } = useSocket({
     token,
     onMessage: (msg) => {
-      addMessage(msg); // update store
+      addMessage(msg);
     },
   });
 
-  // Load messages + conversation details
+  // Load conversation + messages
   useEffect(() => {
     if (!conversationId) return;
+
+    // If we don't have activeChat, fetch the conversation first
+    if (!activeChat || activeChat.id !== conversationId) {
+      api
+        .get(`/chat/conversations`)
+        .then((res) => {
+          const conversation = res.data.find((c: any) => c.id === conversationId);
+          if (conversation) {
+            setActiveChat(conversation);
+          }
+        })
+        .catch(console.error);
+    }
 
     // Fetch messages for this conversation
     api
@@ -39,7 +53,7 @@ export default function ChatPage() {
         setMessages(conversationId, res.data);
       })
       .catch(console.error);
-  }, [conversationId, setMessages]);
+  }, [conversationId, setMessages, activeChat, setActiveChat]);
 
   // Join socket room and handle room switching
   useEffect(() => {
@@ -56,6 +70,20 @@ export default function ChatPage() {
   }, [isConnected, conversationId, joinRoom]);
 
   const handleSend = (text: string) => {
+    if (!text.trim() || !user) return;
+
+    // Optimistically add message to UI immediately
+    const optimisticMessage = {
+      id: Date.now(), // Temporary ID
+      text,
+      senderId: user.id,
+      conversationId,
+      createdAt: new Date().toISOString(),
+    };
+
+    addMessage(optimisticMessage);
+
+    // Send via socket (backend will broadcast the real message)
     sendMessage(conversationId, text);
   };
 
@@ -77,7 +105,7 @@ export default function ChatPage() {
       <div className="flex flex-col flex-1">
         <ChatHeader chat={activeChat} />
 
-        <MessageList messages={activeChat.messages || []} />
+        <MessageList messages={activeChat.messages || []} isConnected={isConnected} />
 
         <MessageInput onSend={handleSend} />
       </div>

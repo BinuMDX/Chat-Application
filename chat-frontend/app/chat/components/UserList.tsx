@@ -39,13 +39,14 @@ export default function UserList() {
 
   const openChat = async (otherUser: any) => {
     try {
-      setActiveChat(otherUser);
-
       const res = await api.post("/chat/conversation", {
         receiverId: otherUser.id,
       });
 
-      const conversationId = res.data.id;
+      const conversation = res.data;
+      setActiveChat(conversation);
+
+      const conversationId = conversation.id;
       setCurrentConversationId(conversationId);
 
       router.push(`/chat/${conversationId}`);

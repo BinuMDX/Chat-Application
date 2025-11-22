@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 interface Message {
   id: number;
-  content: string;
+  text: string;
   senderId: number;
   conversationId: string;
   createdAt: string;
@@ -62,19 +62,19 @@ export const useChatStore = create<ChatState>((set) => ({
       chats: s.chats.map((c) =>
         c.id === msg.conversationId
           ? {
-              ...c,
-              messages: [...c.messages, msg],
-              lastMessage: msg,
-            }
+            ...c,
+            messages: [...c.messages, msg],
+            lastMessage: msg,
+          }
           : c
       ),
       activeChat:
         s.activeChat?.id === msg.conversationId
           ? {
-              ...s.activeChat,
-              messages: [...s.activeChat.messages, msg],
-              lastMessage: msg,
-            }
+            ...s.activeChat,
+            messages: [...s.activeChat.messages, msg],
+            lastMessage: msg,
+          }
           : s.activeChat,
     })),
 
