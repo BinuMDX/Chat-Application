@@ -1,3 +1,4 @@
+import { updateAxiosToken } from "@/lib/axios";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -27,33 +28,37 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       hasHydrated: false,
 
-      setAuth: (user, accessToken, refreshToken) =>
+      setAuth: (user, accessToken, refreshToken) =>{
+        updateAxiosToken
         set({
           user,
           accessToken,
           refreshToken,
           isAuthenticated: true,
-        }),
+        })},
 
-      clearAuth: () =>
+      clearAuth: () =>{
+        updateAxiosToken(null);
         set({
           user: null,
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
-        }),
+        })},
 
-      updateTokens: (accessToken, refreshToken) =>
+      updateTokens: (accessToken, refreshToken) =>{
+        updateAxiosToken(accessToken);
         set({
           accessToken,
           refreshToken,
-        }),
+        })},
     }),
     {
       name: "auth-storage",
-      onRehydrateStorage: () => (state) => {
-        state!.hasHydrated = true;
-      },
+      onRehydrateStorage: () => 
+        (state) => {
+          state!.hasHydrated = true;
+        },
     }
   )
 );

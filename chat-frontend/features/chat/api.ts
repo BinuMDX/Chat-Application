@@ -50,3 +50,7 @@ export async function getMessages(conversationId: string): Promise<Message[]> {
   return res.data;
 }
 
+export async function getUsers(){
+  const res = await api.get("/user");
+  return res.data;
+}

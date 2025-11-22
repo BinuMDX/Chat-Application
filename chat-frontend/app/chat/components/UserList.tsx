@@ -12,7 +12,6 @@ interface User {
 }
 
 export default function UserList() {
-
   const token = useAuthStore((s) => s.accessToken);
   const { user: currentUser, hasHydrated } = useAuthStore();
 
@@ -25,7 +24,8 @@ export default function UserList() {
 
   // Load all users from database
   useEffect(() => {
-    api.get("/user")
+    api
+      .get("/user")
       .then((res) => setUsers(res.data))
       .catch(console.error);
   }, []);
@@ -34,11 +34,11 @@ export default function UserList() {
   const openChat = async (otherUserId: number) => {
     const res = await api.post("/chat/create-or-get", { userId: otherUserId });
 
-    setActiveChat(res.data);  // conversation object
+    setActiveChat(res.data); // conversation object
   };
 
   if (!hasHydrated) {
-  return <div>Loading...</div>;
+    return <div>Loading...</div>;
   }
 
   return (
@@ -46,7 +46,7 @@ export default function UserList() {
       <h2 className="text-lg font-semibold p-4 border-b">Users</h2>
 
       {users
-        .filter(u => u.id !== currentUser.id)
+        .filter((u) => u.id !== currentUser.id)
         .map((user) => (
           <div
             key={user.id}
