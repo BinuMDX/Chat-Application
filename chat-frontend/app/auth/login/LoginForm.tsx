@@ -47,20 +47,30 @@ export function LoginForm({ standalone = true }: LoginFormProps) {
       {standalone && <h1 className="text-xl font-semibold mb-4">Login</h1>}
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <Input
-          type="email"
-          className=""
-          placeholder="Email"
-          {...form.register("email")}
-        />
-        <Input
-          type="password"
-          className=""
-          autoComplete="current-password"
-          placeholder="Password"
-          {...form.register("password")}
-        />
+        <div>
+          <Input
+            type="email"
+            className=""
+            placeholder="Email"
+            {...form.register("email")}
+          />
+          {form.formState.errors.email && (
+            <p className="text-red-500 text-sm">{form.formState.errors.email.message}</p>
+          )}
+        </div>
 
+        <div>
+          <Input
+            type="password"
+            className=""
+            autoComplete="current-password"
+            placeholder="Password"
+            {...form.register("password")}
+          />
+          {form.formState.errors.password && (
+            <p className="text-red-500 text-sm">{form.formState.errors.password.message}</p>
+          )}
+        </div>
         <Button
           type="submit"
           variant="default"
