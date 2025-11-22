@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface User {
   id: number;
@@ -50,23 +50,24 @@ export const useAuthStore = create<AuthState>()(
         }),
     }),
     {
-      name: 'auth-storage',
-      onRehydrateStorage: () => {
-        return () => {
-          // This runs after rehydration is complete
-          useAuthStore.setState({ hasHydrated: true });
-        };
+      name: "auth-storage",
+      onRehydrateStorage: () => (state) => {
+        state!.hasHydrated = true;
       },
     }
   )
 );
 
-// Set hasHydrated immediately for fresh sessions (when there's nothing to rehydrate)
-if (typeof window !== 'undefined') {
-  // Small delay to allow persist middleware to initialize
-  setTimeout(() => {
-    if (!useAuthStore.getState().hasHydrated) {
-      useAuthStore.setState({ hasHydrated: true });
-    }
-  }, 0);
+// // Set hasHydrated immediately for fresh sessions (when there's nothing to rehydrate)
+// if (typeof window !== "undefined") {
+//   // Small delay to allow persist middleware to initialize
+//   setTimeout(() => {
+//     if (!useAuthStore.getState().hasHydrated) {
+//       useAuthStore.setState({ hasHydrated: true });
+//     }
+//   }, 0);
+// }
+
+if (typeof window !== "undefined") {
+  useAuthStore.persist.rehydrate();
 }

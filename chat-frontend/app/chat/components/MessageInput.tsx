@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 
-export default function MessageInput() {
-  const [message, setMessage] = useState("");
+export default function MessageInput({ onSend }: { onSend: (msg: string) => void }) {
+  const [message, setInput] = useState("");
 
   const sendMessage = () => {
-    if (!message.trim()) return;
-    console.log("sending:", message);
-    setMessage("");
+   if (!message.trim()) return;
+    onSend(message);
+    setInput("");
   };
 
   return (
@@ -17,7 +17,7 @@ export default function MessageInput() {
         className="flex-1 p-2 border rounded-md"
         placeholder="Type a message..."
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={e => setInput(e.target.value)}
       />
       <button
         className="px-4 py-2 bg-blue-500 text-white rounded-md"
