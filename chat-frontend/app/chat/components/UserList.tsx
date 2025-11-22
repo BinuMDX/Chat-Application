@@ -2,60 +2,52 @@
 
 import { useEffect, useState } from "react";
 import api from "@/lib/axios";
-import { useAuthStore } from "@/features/auth/store";
 import { useChatStore } from "@/features/chat/store";
-import { useSocket } from "@/hooks/useSocket";
-
-interface User {
-  id: number;
-  username: string;
-}
+import { useAuthStore } from "@/features/auth/store";
 
 export default function UserList() {
-  const token = useAuthStore((s) => s.accessToken);
-  const { user: currentUser, hasHydrated } = useAuthStore();
+  const { user } = useAuthStore();
+  const { activeChat, setActiveChat } = useChatStore();
 
-  const setActiveChat = useChatStore((s) => s.setActiveChat);
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [users, setUsers] = useState<User[]>([]);
-
-  // Initialize socket
-  useSocket({ token });
-
-  // Load all users from database
   useEffect(() => {
-    api
-      .get("/user")
-      .then((res) => setUsers(res.data))
-      .catch(console.error);
+    const loadUsers = async () => {
+      try {
+        const res = await api.get("/user");
+        setUsers(res.data);
+      } catch (err) {
+        console.error("Load users failed:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUsers();
   }, []);
 
-  // Click → start chat or open existing conversation
-  const openChat = async (otherUserId: number) => {
-    const res = await api.post("/chat/create-or-get", { userId: otherUserId });
-
-    setActiveChat(res.data); // conversation object
-  };
-
-  if (!hasHydrated) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div className="p-4">Loading users…</div>;
 
   return (
-    <div className="border-r w-64 h-full overflow-y-auto bg-white">
-      <h2 className="text-lg font-semibold p-4 border-b">Users</h2>
+    <div className="w-64 bg-white border-r p-4">
+      <h2 className="font-bold text-lg mb-3">Users</h2>
 
-      {users
-        .filter((u) => u.id !== currentUser.id)
-        .map((user) => (
-          <div
-            key={user.id}
-            onClick={() => openChat(user.id)}
-            className="p-3 border-b cursor-pointer hover:bg-gray-100"
-          >
-            <div className="font-semibold">{user.username}</div>
-          </div>
-        ))}
+      <ul className="space-y-2">
+        {users
+          .filter((u) => u.id !== user?.id) // hide yourself
+          .map((u) => (
+            <li
+              key={u.id}
+              onClick={() => setActiveChat(u)}
+              className={`p-3 cursor-pointer rounded-lg 
+                ${activeChat?.id === u.id ? "bg-blue-500 text-white" : "bg-gray-100"}
+              `}
+            >
+              {u.username}
+            </li>
+          ))}
+      </ul>
     </div>
   );
 }
