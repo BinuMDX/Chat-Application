@@ -56,7 +56,7 @@ export async function getUsers(){
 }
 
  export async function createOrGetConversation(receiverId: number) {
-   const res = await api.post("/chat/conversations", {
+   const res = await api.post("/chat/conversation", {
       participantIds: [receiverId],
     });
     return res.data;

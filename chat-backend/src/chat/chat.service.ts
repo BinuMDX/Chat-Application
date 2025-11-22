@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -47,34 +47,42 @@ export class ChatService {
     });
   }
 
-   async createOrGetConversation(userId: number, receiverId: number) {
-    // Does conversation already exist?
-    let conversation = await this.prismaService.conversation.findFirst({
+  async createOrGetConversation(userId: number, receiverId: number) {
+    if (userId === receiverId) {
+      throw new NotFoundException(
+        'Cannot create a conversation with yourself.',
+      );
+    }
+
+    // Check if both users exist
+    const receiver = await this.prismaService.user.findUnique({
+      where: { id: receiverId },
+    });
+
+    if (!receiver) throw new NotFoundException('Receiver not found.');
+
+    // Check if conversation already exists
+    const existing = await this.prismaService.conversation.findFirst({
       where: {
         participants: {
           every: {
-            userId: { in: [userId, receiverId] },
+            OR: [{ userId }, { userId: receiverId }],
           },
         },
       },
       include: {
         participants: { include: { user: true } },
-        messages: {
-          orderBy: { createdAt: 'asc' },
-        },
+        messages: { orderBy: { createdAt: 'asc' } },
       },
     });
 
-    if (conversation) return conversation;
+    if (existing) return existing;
 
     // Create new conversation
-    conversation = await this.prismaService.conversation.create({
+    const conversation = await this.prismaService.conversation.create({
       data: {
         participants: {
-          create: [
-            { userId },
-            { userId: receiverId },
-          ],
+          create: [{ userId }, { userId: receiverId }],
         },
       },
       include: {

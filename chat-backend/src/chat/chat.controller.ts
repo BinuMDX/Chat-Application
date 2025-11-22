@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Req } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { GetCurrentUserId } from '../auth/common';
 import { CreateMessageDto } from './dtos/create-message.dto';
@@ -6,15 +6,15 @@ import { CreateConversationDto } from './dtos/create-conversation.dto';
 
 @Controller('chat')
 export class ChatController {
-   constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService) {}
 
-   @Get('/conversations')
-   getConversations(@GetCurrentUserId() userId: number) {
-      return this.chatService.getConversations(userId);
-   }
+  @Get('/conversations')
+  getConversations(@GetCurrentUserId() userId: number) {
+    return this.chatService.getConversations(userId);
+  }
 
-   @Get('/messages/:conversationId')
-  getMessages(@Param("conversationId") id: string) {
+  @Get('/messages/:conversationId')
+  getMessages(@Param('conversationId') id: string) {
     return this.chatService.getMessages(id);
   }
 
@@ -27,11 +27,9 @@ export class ChatController {
     return this.chatService.saveMessage(conversationId, userId, dto.content);
   }
 
-  @Post('/conversation')
-  createConversation(
-    @Body() dto: CreateConversationDto,
-    @GetCurrentUserId() userId: number,
-  ) {
+  @Post('conversation')
+  async createConversation(@Req() req, @Body() dto: CreateConversationDto) {
+    const userId = req.user.id;
     return this.chatService.createOrGetConversation(userId, dto.receiverId);
   }
 }
