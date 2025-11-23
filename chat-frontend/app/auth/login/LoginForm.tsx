@@ -4,7 +4,9 @@ import { api } from "@/lib/axios";
 import { loginSchema, LoginSchema } from "@/lib/validators/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import axios from "axios";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
 import { Input } from "@/components/input";
@@ -16,6 +18,7 @@ interface LoginFormProps {
 
 export function LoginForm({ standalone = true }: LoginFormProps) {
   const router = useRouter();
+  const [serverError, setServerError] = useState<string>("");
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -29,6 +32,7 @@ export function LoginForm({ standalone = true }: LoginFormProps) {
 
   const onSubmit = async (values: LoginSchema) => {
     try {
+      setServerError(""); // Clear any previous errors
       const res = await api.post("/auth/login", values);
       setAuth(res.data.user, res.data.access_token, res.data.refresh_token);
 
@@ -38,13 +42,24 @@ export function LoginForm({ standalone = true }: LoginFormProps) {
       router.push("/chat");
     } catch (error) {
       console.error(error);
-      alert("Invalid credentials");
+      // Extract the error message from the backend response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        setServerError(error.response.data.message);
+      } else {
+        setServerError("Login failed. Please check your credentials.");
+      }
     }
   };
 
   const formContent = (
     <>
       {standalone && <h1 className="text-xl font-semibold mb-4">Login</h1>}
+
+      {serverError && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {serverError}
+        </div>
+      )}
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div>
