@@ -18,11 +18,11 @@ This is a full‑stack real‑time chat application built with Next.js, NestJS, 
 
 ### Project Documentation & Preview
  Preview Video: A walkthrough video demonstrating the app workflow:
-👉 docs/preview.mp4
+ *docs/preview.mp4
 
 ### Full Project Documentation
 Detailed architecture, API details, DB schema, diagrams, and implementation notes:
-👉 docs/Documentation.pdf
+*docs/Documentation.pdf
 
 ---
 
@@ -52,7 +52,6 @@ Detailed architecture, API details, DB schema, diagrams, and implementation note
 
 ```
 git clone <https://github.com/BinuMDX/Chat-Application>
-cd your-project
 ```
 
 ---
@@ -62,7 +61,7 @@ cd your-project
 Navigate into the backend directory:
 
 ```
-cd backend
+cd chat-backend
 ```
 
 ### **Install dependencies**
@@ -78,6 +77,7 @@ Create a `.env` file:
 ```
 DATABASE_URL="postgresql://username:password@localhost:5432/chatapp"
 JWT_SECRET="your-secret"
+JWT_EXPIRES_IN="1d"
 ```
 
 ### **Run Prisma migrations**
@@ -99,7 +99,7 @@ npm run start:dev
 Navigate into the frontend directory:
 
 ```
-cd frontend
+cd chat-frontend
 ```
 
 ### **Install dependencies**
