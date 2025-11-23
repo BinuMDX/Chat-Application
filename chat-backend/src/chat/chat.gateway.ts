@@ -11,7 +11,18 @@ import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import * as jwt from 'jsonwebtoken';
 
-@WebSocketGateway({ cors: { origin: '*' } })
+@WebSocketGateway({
+  cors: {
+    origin: [
+      'https://chat-application-dws6.vercel.app',
+      'http://localhost:3000',
+      'http://localhost:3001',
+      /^https:\/\/chat-application-.*\.vercel\.app$/, 
+    ],
+    credentials: true,
+  },
+})
+
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
