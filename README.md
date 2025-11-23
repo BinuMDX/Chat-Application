@@ -141,7 +141,6 @@ Your app will now be running at: `http://localhost:3000`
 * `GET /chat/conversations`
 * `POST /chat/conversations` → create or get existing
 * `GET /chat/messages/:conversationId`
-* `POST /chat/messages/:conversationId`
 
 ---
 
