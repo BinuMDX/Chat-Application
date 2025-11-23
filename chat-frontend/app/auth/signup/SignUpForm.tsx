@@ -33,28 +33,23 @@ export function SignUpForm({ standalone = true }: SignUpFormProps) {
   const { errors } = form.formState;
 
   const onSubmit = async (values: SignupSchema) => {
-    // Prevent double submission
     if (isSubmitting) return;
 
     setIsSubmitting(true);
     try {
-      setServerError(""); // Clear any previous errors
+      setServerError(""); 
 
-      // Exclude confirmPassword from the request (backend doesn't expect it)
       const { confirmPassword, ...signupData } = values;
       await api.post("/auth/signup", signupData);
 
-      // Show success message
       setSuccessMessage("Account created successfully! Redirecting to login...");
 
-      // Wait a bit to show the message, then redirect
       setTimeout(() => {
         router.push("/auth/login");
-      }, 2000);
+      }, 1000);
     }
     catch (error) {
       console.error(error);
-      // Extract the error message from the backend response
       if (axios.isAxiosError(error) && error.response?.data?.message) {
         setServerError(error.response.data.message);
       } else {

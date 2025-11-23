@@ -10,7 +10,6 @@ export function LandingPage() {
 
     return (
         <div className="min-h-screen w-full flex flex-col items-center justify-center bg-white">
-            {/* Header */}
             <div className="mb-12">
                 <div className="flex items-center justify-center gap-3">
                     <MessageCircle className="w-8 h-8 text-gray-900" strokeWidth={1.5} />
@@ -20,10 +19,8 @@ export function LandingPage() {
                 </div>
             </div>
 
-            {/* Auth forms */}
             <div className="w-full max-w-md px-4">
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                    {/* Tab switcher */}
                     <div className="flex border-b border-gray-200">
                         <button
                             onClick={() => setActiveTab("login")}
@@ -45,7 +42,6 @@ export function LandingPage() {
                         </button>
                     </div>
 
-                    {/* Form container */}
                     <div className="p-8">
                         <div
                             className={`transition-all duration-300 ${activeTab === "login" ? "opacity-100" : "opacity-0 hidden"

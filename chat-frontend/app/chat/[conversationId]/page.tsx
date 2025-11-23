@@ -22,7 +22,7 @@ export default function ChatPage() {
 
   const { activeChat, setActiveChat, setMessages, addMessage } = useChatStore();
 
-  // Wrap onMessage in useCallback to prevent recreating on every render
+
   const handleMessage = useCallback((msg: any) => {
     console.log('Message received from socket:', msg);
     addMessage(msg);
@@ -33,11 +33,9 @@ export default function ChatPage() {
     onMessage: handleMessage,
   });
 
-  // Load conversation + messages
   useEffect(() => {
     if (!conversationId) return;
 
-    // If we don't have activeChat, fetch the conversation first
     if (!activeChat || activeChat.id !== conversationId) {
       api
         .get(`/chat/conversations`)
@@ -50,7 +48,6 @@ export default function ChatPage() {
         .catch(console.error);
     }
 
-    // Fetch messages for this conversation
     api
       .get(`/chat/messages/${conversationId}`)
       .then((res) => {
@@ -59,16 +56,13 @@ export default function ChatPage() {
       .catch(console.error);
   }, [conversationId, setMessages, activeChat, setActiveChat]);
 
-  // Join socket room and handle room switching
   useEffect(() => {
     if (isConnected && conversationId) {
       console.log('Joining room:', conversationId);
       joinRoom(conversationId);
 
-      // Cleanup: leave room when conversation changes or component unmounts
       return () => {
         console.log('Leaving room:', conversationId);
-        // Note: leaveRoom is handled by socket cleanup
       };
     }
   }, [isConnected, conversationId, joinRoom]);
@@ -76,9 +70,8 @@ export default function ChatPage() {
   const handleSend = (text: string) => {
     if (!text.trim() || !user) return;
 
-    // Optimistically add message to UI immediately
     const optimisticMessage = {
-      id: Date.now(), // Temporary ID
+      id: Date.now(), 
       text,
       senderId: user.id,
       conversationId,
@@ -87,7 +80,6 @@ export default function ChatPage() {
 
     addMessage(optimisticMessage);
 
-    // Send via socket (backend will broadcast the real message)
     sendMessage(conversationId, text);
   };
 

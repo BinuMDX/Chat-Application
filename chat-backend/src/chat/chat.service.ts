@@ -38,7 +38,7 @@ export class ChatService {
       },
     });
 
-    // Transform conversations to match frontend expectations
+    
     return conversations.map((conv) => ({
       id: conv.id,
       participants: conv.participants.map((p) => ({
@@ -69,7 +69,7 @@ export class ChatService {
       orderBy: { createdAt: 'asc' },
     });
 
-    // Transform messages to match frontend expectations
+    
     return messages.map((msg) => ({
       id: msg.id,
       text: msg.text,
@@ -86,14 +86,12 @@ export class ChatService {
       );
     }
 
-    // Check if both users exist
     const receiver = await this.prismaService.user.findUnique({
       where: { id: receiverId },
     });
 
     if (!receiver) throw new NotFoundException('Receiver not found.');
 
-    // Check if conversation already exists
     const existing = await this.prismaService.conversation.findFirst({
       where: {
         participants: {
@@ -110,7 +108,6 @@ export class ChatService {
 
     if (existing) return existing;
 
-    // Create new conversation
     const conversation = await this.prismaService.conversation.create({
       data: {
         participants: {

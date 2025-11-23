@@ -17,7 +17,6 @@ export default function ChatPage() {
       <Sidebar />
 
       <div className="flex flex-col flex-1 bg-gray-100">
-        {/* Header with menu button */}
         <div className="p-4 bg-white border-b flex items-center">
           <button
             onClick={toggleSidebar}
@@ -28,7 +27,6 @@ export default function ChatPage() {
           <h1 className="font-bold text-xl">Chats</h1>
         </div>
 
-        {/* Main content area */}
         <div className="flex flex-1 items-start justify-center pt-16">
           <div className="text-center p-8">
             <h2 className="text-2xl font-semibold text-gray-700 mb-2">

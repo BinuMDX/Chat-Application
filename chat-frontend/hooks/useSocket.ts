@@ -18,13 +18,11 @@ export const useSocket = (options: UseSocketOptions) => {
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
 
-  // Store callbacks in refs to prevent re-creating socket on every render
   const onMessageRef = useRef(onMessage);
   const onConnectRef = useRef(onConnect);
   const onDisconnectRef = useRef(onDisconnect);
   const onErrorRef = useRef(onError);
 
-  // Update refs when callbacks change
   useEffect(() => {
     onMessageRef.current = onMessage;
     onConnectRef.current = onConnect;
@@ -40,13 +38,13 @@ export const useSocket = (options: UseSocketOptions) => {
 
     console.log('Initializing socket connection...');
 
-    // Create socket connection with token
+
     const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3033', {
       auth: {
         token,
       },
       query: {
-        token, // Also send in query for compatibility with Postman testing
+        token, 
       },
       reconnection: true,
       reconnectionDelay: 1000,
@@ -56,7 +54,6 @@ export const useSocket = (options: UseSocketOptions) => {
 
     socketRef.current = socket;
 
-    // Connection event handlers
     socket.on('connect', () => {
       console.log('Socket connected:', socket.id);
       setIsConnected(true);
@@ -77,13 +74,11 @@ export const useSocket = (options: UseSocketOptions) => {
       onErrorRef.current?.(error);
     });
 
-    // Message handler
     socket.on('message', (message) => {
       console.log('Received message:', message);
       onMessageRef.current?.(message);
     });
 
-    // Cleanup on unmount
     return () => {
       console.log('Cleaning up socket connection');
       socket.off('connect');
@@ -93,9 +88,8 @@ export const useSocket = (options: UseSocketOptions) => {
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [token]); // Only depend on token
+  }, [token]);
 
-  // Join a conversation room
   const joinRoom = (conversationId: string) => {
     if (socketRef.current?.connected) {
       socketRef.current.emit('join', { conversationId });
@@ -105,7 +99,6 @@ export const useSocket = (options: UseSocketOptions) => {
     }
   };
 
-  // Leave a conversation room (optional)
   const leaveRoom = (conversationId: string) => {
     if (socketRef.current?.connected) {
       socketRef.current.emit('leave', { conversationId });
@@ -113,7 +106,6 @@ export const useSocket = (options: UseSocketOptions) => {
     }
   };
 
-  // Send a message
   const sendMessage = (conversationId: string, content: string) => {
     if (socketRef.current?.connected) {
       socketRef.current.emit('message', {

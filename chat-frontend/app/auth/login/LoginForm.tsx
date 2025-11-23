@@ -32,17 +32,15 @@ export function LoginForm({ standalone = true }: LoginFormProps) {
 
   const onSubmit = async (values: LoginSchema) => {
     try {
-      setServerError(""); // Clear any previous errors
+      setServerError("");
       const res = await api.post("/auth/login", values);
       setAuth(res.data.user, res.data.access_token, res.data.refresh_token);
 
-      // Small delay to ensure Zustand persist completes
       await new Promise(resolve => setTimeout(resolve, 100));
 
       router.push("/chat");
     } catch (error) {
       console.error(error);
-      // Extract the error message from the backend response
       if (axios.isAxiosError(error) && error.response?.data?.message) {
         setServerError(error.response.data.message);
       } else {

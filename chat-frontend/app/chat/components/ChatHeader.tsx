@@ -23,7 +23,6 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
 
   const { toggleSidebar } = useUIStore();
 
-  // Find the receiver (the participant who is not the current user)
   const receiver = chat.participants.find(
     (participant) => participant.user.id !== currentUser?.id
   );

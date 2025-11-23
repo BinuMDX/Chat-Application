@@ -17,7 +17,6 @@ export class AuthService {
   }
 
   async signup(dto: AuthDto): Promise<Tokens> {
-    // Check if user with username already exists
     const existingUserByUsername = await this.prismaService.user.findUnique({
       where: {
         username: dto.username,
@@ -28,7 +27,6 @@ export class AuthService {
       throw new ConflictException('Username already exists');
     }
 
-    // Check if user with email already exists
     const existingUserByEmail = await this.prismaService.user.findUnique({
       where: {
         email: dto.email,
