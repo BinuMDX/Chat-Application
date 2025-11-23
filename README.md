@@ -1,6 +1,6 @@
 # Chat Application
 
-A full‑stack real‑time chat application built with Next.js, NestJS, PostgreSQL, Prisma, and Socket.IO. This project includes user authentication, conversation management, real‑time messaging, and a clean UI.
+This is a full‑stack real‑time chat application built with Next.js, NestJS, PostgreSQL, Prisma, and Socket.IO. This project includes user authentication, conversation management, real‑time messaging, and a clean UI.
 
 ---
 
@@ -146,31 +146,16 @@ Your app will now be running at: `http://localhost:3000`
 The UI is optimized for:
 
 * Desktop
-* Tablets
 * Mobile (sidebar collapses, chat takes full width)
 
 ---
 
 ## Assumptions & Limitations
 
-* Messages are **not encrypted** end‑to‑end.
-* Only **one-to-one conversations** (no group chats).
+* Messages are not encrypted end‑to‑end.
+* Only one-to-one conversations (no group chats).
 * User list is assumed to come from authenticated backend.
-* Socket reconnection assumes stable network.
 * No file uploads (images, documents) yet.
 
 ---
 
-## Future Improvements
-
-* Group chats
-* Typing indicators
-* Message read receipts
-* Image & file sharing
-* Push notifications
-
----
-
-## License
-
-MIT
