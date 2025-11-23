@@ -18,7 +18,11 @@ This is a full‑stack real‑time chat application built with Next.js, NestJS, 
 
 ### Project Documentation & Preview
  Preview Video: A walkthrough video demonstrating the app workflow:
- *docs/preview.mp4
+ 
+
+https://github.com/user-attachments/assets/3cc093ac-a7f7-464e-a9a2-3435ce9be615
+
+
 
 ### Full Project Documentation
 Detailed architecture, API details, DB schema, diagrams, and implementation notes:
