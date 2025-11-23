@@ -76,7 +76,7 @@ Create a `.env` file:
 
 ```
 DATABASE_URL="postgresql://username:password@localhost:5432/chatapp"
-JWT_SECRET="your-secret"
+JWT_SECRET="supersecretkey"
 JWT_EXPIRES_IN="1d"
 ```
 
