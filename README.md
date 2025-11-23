@@ -55,7 +55,7 @@ Detailed architecture, API details, DB schema, diagrams, and implementation note
 ### **1. Clone the Repository**
 
 ```
-git clone <https://github.com/BinuMDX/Chat-Application>
+git clone https://github.com/BinuMDX/Chat-Application
 ```
 
 ---
