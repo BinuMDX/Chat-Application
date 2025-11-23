@@ -139,8 +139,9 @@ Your app will now be running at: `http://localhost:3000`
 ### **Chat**
 
 * `GET /chat/conversations`
-* `POST /chat/conversations` → create or get existing
+* `POST /chat/conversations` - create or get existing
 * `GET /chat/messages/:conversationId`
+* `POST /chat/messages/:conversationId` - deprecated
 
 ---
 
