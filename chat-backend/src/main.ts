@@ -6,7 +6,7 @@ import { AtGuard } from './auth/common/guards';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: 'https://chat-application-dws6.vercel.app/',
+    origin: 'https://chat-application-dws6.vercel.app',
   });
   app.useGlobalPipes(new ValidationPipe());
   const reflector = new Reflector();
