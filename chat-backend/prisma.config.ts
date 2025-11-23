@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-import { defineConfig } from "prisma/config";
+import { defineConfig, env } from "prisma/config";
 import { resolve } from "path";
 
 // Load environment variables from .env file
@@ -13,6 +13,5 @@ export default defineConfig({
   engine: "classic",
   datasource: {
     url: process.env.DATABASE_URL || "postgresql://user:password@localhost:5432/chatapp",
-    directUrl: process.env.DIRECT_URL,
   },
 });
