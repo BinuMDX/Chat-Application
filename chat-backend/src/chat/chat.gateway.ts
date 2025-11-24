@@ -13,12 +13,7 @@ import * as jwt from 'jsonwebtoken';
 
 @WebSocketGateway({
   cors: {
-    origin: [
-      'https://chat-application-dws6.vercel.app',
-      'http://localhost:3000',
-      'http://localhost:3001',
-      /^https:\/\/chat-application-.*\.vercel\.app$/, 
-    ],
+    origin: ['https://chat-application-dws6.vercel.app', 'http://localhost:3000'],
     credentials: true,
   },
 })
