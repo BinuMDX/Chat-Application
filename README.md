@@ -18,7 +18,11 @@ This is a full‑stack real‑time chat application built with Next.js, NestJS, 
 
 ### Project Documentation & Preview
  Preview Video: A walkthrough video demonstrating the app workflow:
- *docs/preview.mp4
+ 
+
+https://github.com/user-attachments/assets/3cc093ac-a7f7-464e-a9a2-3435ce9be615
+
+
 
 ### Full Project Documentation
 Detailed architecture, API details, DB schema, diagrams, and implementation notes:
@@ -51,7 +55,7 @@ Detailed architecture, API details, DB schema, diagrams, and implementation note
 ### **1. Clone the Repository**
 
 ```
-git clone <https://github.com/BinuMDX/Chat-Application>
+git clone https://github.com/BinuMDX/Chat-Application
 ```
 
 ---
@@ -135,9 +139,9 @@ Your app will now be running at: `http://localhost:3000`
 ### **Chat**
 
 * `GET /chat/conversations`
-* `POST /chat/conversations` → create or get existing
+* `POST /chat/conversations` - create or get existing
 * `GET /chat/messages/:conversationId`
-* `POST /chat/messages/:conversationId`
+* `POST /chat/messages/:conversationId` - deprecated
 
 ---
 
